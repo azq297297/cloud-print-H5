@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+    <title>文档打印</title>
+</head>
+<body>
+<div class="file-bg"><img src="../images/file.png" alt=""/></div>
+<div class="file-title">支持上传word、ppt、pdf、xls格式文件</div>
+<div class="file-btn" onclick="selectFile()">
+    选择本地文档打印
+</div>
+<input type="file" id="selectInput">
+<div class="tip"><span>错误提示</span></div>
+<div id="loading" class="loading">
+    <div>
+        <div><img src="../images/file_load.png" alt=""></div>
+        <div><img src="../images/progress.gif" alt=""></div>
+        <p>文件加密上传中</p>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<script type="text/javascript" src="https://js.cdn.aliyun.dcloud.net.cn/dev/uni-app/uni.webview.1.5.2.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="../libs/lib-flexible-2.0/index.min.js"></script>
+<script>
+  $(function () {
+    var fileType = ['doc', 'docx', 'pdf', 'pdfx', 'ppt', 'pptx', 'xls', 'xlsx'];
+    $('#selectInput').change(function () {
+      var $file = $("#selectInput")[0].files;
+      var fileName = $file[0].name;
+      if (fileName.lastIndexOf('.') < 0) {
+        showTip('文件格式不正确');
+        return;
+      }
+      var type = fileName.substring(fileName.lastIndexOf('.') + 1);
+      if (fileType.indexOf(type) < 0) {
+        showTip('文件格式不正确');
+        return;
+      }
+      console.log($file[0].name.substring($file[0].name.lastIndexOf('.') + 1));
+      uploadFile();
+      // uni.postMessage({data: 1});
+      // uni.navigateBack({delta: 1});
+    })
+  });
+
+  /* 格式化整理url search参数 */
+  function formatUrl() {
+    var obj = {};
+    const arr = location.search.substring(location.search.lastIndexOf('?') + 1).split('&');
+    for (var i = 0; i < arr.length; i++) {
+      obj[arr[i].split('=')[0]] = arr[i].split('=')[1];
+    }
+    return obj;
+  }
+
+  /**
+   * 显示提示窗
+   * @param msg 弹窗内信息
+   */
+  function showTip(msg) {
+    var $tip = $('.tip');
+    $tip.find('span').text(msg);
+    $tip.show();
+    setTimeout(function () {
+      $("#selectInput").val('');
+      $tip.hide();
+    }, 2000);
+  }
+
+  /* 点击选择按钮触发input */
+  function selectFile() {
+    $('#selectInput').click();
+  }
+
+  /* 上传文件 */
+  function uploadFile() {
+    let url = '';
+    const searchObj = formatUrl();
+    var $loading = $('#loading');
+    $loading.css('display', 'flex');
+    var formData = new FormData();
+    if (searchObj.type === 'print') {
+      formData.append("iFile", $("#selectInput")[0].files[0]);
+      formData.append("upload_type", '2');
+      formData.append("scene", '1');
+      formData.append("token", searchObj.token);
+      formData.append("wxapp_id", '10001');
+      if (searchObj.orderNo && searchObj.orderNo !== 'undefined') {
+        formData.append("order_no", searchObj.orderNo);
+      }
+      url = '/api/Upload/printFileUpload';
+    } else {
+      formData.append("iFile", $("#selectInput")[0].files[0]);
+      formData.append("token", searchObj.token);
+      formData.append("wxapp_id", '10001');
+      url = '/api/upload/zoomPrintFileUpload';
+    }
+
+    $.ajax({
+      url: 'http://print-dev.kaituocn.com/index.php?s=' + url, /*接口域名地址*/
+      type: 'post',
+      data: formData,
+      contentType: false,
+      processData: false,
+      timeout: 0,
+      success: function (res) {
+        $loading.css('display', 'none');
+
+        switch (res.code) {
+          case 1:
+            if (searchObj.type === 'print') {
+              uni.redirectTo({
+                url: '/pages/index/filePrint/order/order?orderNo=' + res.data.order_no,
+              });
+            } else {
+              uni.redirectTo({
+                url: '/pages/index/reductionMakeup/reduction/index/index?orderNo=' + res.data.order_no,
+              });
+            }
+            break;
+          case -1:
+            // token失效
+            uni.redirectTo({
+              url: '/pages/mine/login/login',
+            });
+            break;
+          default:
+            showTip(res.msg);
+            break;
+        }
+      },
+    })
+  }
+</script>
+</body>
+</html>

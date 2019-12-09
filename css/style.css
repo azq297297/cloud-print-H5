@@ -1,0 +1,87 @@
+.file-bg {
+  padding-top: 1.3333333333rem;
+  text-align: center;
+}
+.file-bg img {
+  width: 7.4133333333rem;
+  height: 4.96rem;
+}
+
+.file-title {
+  color: #333;
+  text-align: center;
+  font-size: 0.3733333333rem;
+  font-weight: 500;
+  padding-top: 1.6rem;
+}
+
+.file-btn {
+  width: 8rem;
+  height: 1.0933333333rem;
+  background-color: #fd2316;
+  color: #fff;
+  border-radius: 0.1066666667rem;
+  font-size: 0.48rem;
+  text-align: center;
+  margin: 4rem auto 0;
+  line-height: 1.0933333333rem;
+}
+
+#selectInput {
+  display: none;
+}
+
+.tip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  font-size: 0.32rem;
+  height: 1.0666666667rem;
+  color: #fff;
+  text-align: center;
+  display: none;
+}
+.tip span {
+  background-color: rgba(0, 0, 0, 0.6);
+  height: 1.0666666667rem;
+  display: inline-block;
+  line-height: 1.0666666667rem;
+  padding-left: 0.2666666667rem;
+  padding-right: 0.2666666667rem;
+  border-radius: 0.1066666667rem;
+}
+
+.loading {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(15, 12, 11, 0.67);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.4rem;
+  font-weight: 600;
+}
+.loading > div {
+  text-align: center;
+}
+.loading > div > div:nth-child(1) img {
+  width: 1.8133333333rem;
+  height: 2.3333333333rem;
+}
+.loading > div > div:nth-child(2) {
+  margin-top: 0.6666666667rem;
+  margin-bottom: 1.2rem;
+}
+.loading > div > div:nth-child(2) img {
+  width: 6.8rem;
+  height: 0.2666666667rem;
+}
+
+/*# sourceMappingURL=style.css.map */

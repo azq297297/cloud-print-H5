@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 建议禁用外框浏览器自带的缩放 -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            /* 防止双击缩放 */
+            touch-action: manipulation;
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        #aliyunPreview {
+            flex: 1;
+            min-height: 100vh;
+            height: 100%;
+            width: 100vw;
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+      function json2str(obj) {
+        return JSON.stringify(obj, function (key, val) {
+          if (typeof val === 'function') {
+            val = val.toString();
+          }
+          return val;
+        });
+      };
+      window.sendMessage = function (action, data) {
+        var iframe = document.getElementById('aliyunPreview');
+        iframe.contentWindow.postMessage(json2str({action: action, data: data}), '*');
+      };
+      window.addEventListener('message', function (e) {
+        try {
+          var res = JSON.parse(e.data);
+        } catch (err) {
+          return;
+        }
+        switch (res.action) {
+          case 'preview.ready':
+            window.sendMessage('preview.init', {
+              url: location.search.split('=')[1],
+            });
+            break;
+        }
+      }, false);
+      //禁止双指缩放手势
+      document.addEventListener('gesturestart', function (e) {
+        e.preventDefault();
+      });
+    </script>
+</head>
+<body>
+<iframe
+        allowfullscreen
+        id="aliyunPreview"
+        frameborder="0"
+        src="https://preview.imm.aliyun.com/index.html"
+></iframe>
+</body>
+</html>
